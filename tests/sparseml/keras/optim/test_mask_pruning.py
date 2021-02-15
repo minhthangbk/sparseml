@@ -16,6 +16,12 @@ import numpy as np
 import pytest
 import tensorflow as tf
 
+
+try:
+    import keras
+except ModuleNotFoundError:
+    import tensorflow.keras as keras
+
 from sparseml.keras.optim import MaskedLayer, UnstructuredPruningMaskCreator
 from tests.sparseml.keras.optim.mock import DenseLayerCreator, MockPruningScheduler
 
@@ -65,7 +71,7 @@ def test_mask_update_explicit(
     masked_layer = MaskedLayer(layer, pruning_scheduler, mask_creator)
     update_steps = list(pruning_scheduler.step_and_sparsity_pairs.keys())
     for idx, update_step in enumerate(update_steps):
-        tf.keras.backend.batch_set_value([(masked_layer.global_step, update_step)])
+        keras.backend.batch_set_value([(masked_layer.global_step, update_step)])
         masked_layer.mask_updater.conditional_update(training=True)
-        mask = tf.keras.backend.get_value(masked_layer.masks[0])
+        mask = keras.backend.get_value(masked_layer.masks[0])
         assert np.allclose(mask, expected_mask[idx])

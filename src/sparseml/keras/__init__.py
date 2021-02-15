@@ -24,9 +24,23 @@ try:
 
     version = [int(v) for v in tensorflow.__version__.split(".")]
     if version[0] != 2 or version[1] < 2:
-        raise Exception
+        raise RuntimeError("TensorFlow >= 2.2 is required, found {}".format(version))
 except:
     raise RuntimeError(
-        "Unable to import tensorflow. tensorflow>=2.2 is required"
+        "Unable to import tensorflow. TensorFlow>=2.2 is required"
         " to use sparseml.keras."
     )
+
+
+try:
+    import keras
+
+    v = keras.__version__
+    if v < "2.4.3":
+        raise RuntimeError(
+            "Native keras is found and will be used, but required >= 2.4.3, found {}".format(
+                v
+            )
+        )
+except:
+    pass
